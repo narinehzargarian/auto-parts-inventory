@@ -9,7 +9,9 @@ import {
   Trash2,
   MapPin,
   Package,
-  X
+  X,
+  Car,
+  Image as ImageIcon
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -55,6 +57,24 @@ function getConditionColor(condition: string) {
   }
 }
 
+function getVehicleCompatibilityText(item: InventoryItem): string | null {
+  if (!item.vehicleMake && !item.vehicleModel) return null;
+  
+  const parts: string[] = [];
+  if (item.vehicleYearStart && item.vehicleYearEnd) {
+    parts.push(`${item.vehicleYearStart}-${item.vehicleYearEnd}`);
+  } else if (item.vehicleYearStart) {
+    parts.push(`${item.vehicleYearStart}+`);
+  } else if (item.vehicleYearEnd) {
+    parts.push(`Up to ${item.vehicleYearEnd}`);
+  }
+  
+  if (item.vehicleMake) parts.push(item.vehicleMake);
+  if (item.vehicleModel) parts.push(item.vehicleModel);
+  
+  return parts.length > 0 ? `Fits: ${parts.join(" ")}` : null;
+}
+
 function ItemCard({ 
   item, 
   onEdit, 
@@ -65,11 +85,27 @@ function ItemCard({
   onDelete: () => void;
 }) {
   const isLowStock = item.quantity <= item.lowStockThreshold;
+  const vehicleCompat = getVehicleCompatibilityText(item);
   
   return (
     <Card className="group relative">
       <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-4">
+          {item.imageUrl ? (
+            <div className="shrink-0 w-24 h-24 rounded-md overflow-hidden bg-muted">
+              <img 
+                src={item.imageUrl} 
+                alt={item.name}
+                className="w-full h-full object-cover"
+                data-testid={`img-item-${item.id}`}
+              />
+            </div>
+          ) : (
+            <div className="shrink-0 w-24 h-24 rounded-md bg-muted flex items-center justify-center">
+              <ImageIcon className="w-8 h-8 text-muted-foreground/40" />
+            </div>
+          )}
+          
           <div className="flex-1 min-w-0 space-y-3">
             <div className="flex items-start justify-between gap-2">
               <div className="space-y-1">
@@ -116,6 +152,16 @@ function ItemCard({
               >
                 {item.condition}
               </Badge>
+              {vehicleCompat && (
+                <Badge 
+                  variant="outline" 
+                  className="shrink-0 bg-violet-500/10 text-violet-700 dark:text-violet-400 border-violet-500/30"
+                  data-testid={`badge-vehicle-compat-${item.id}`}
+                >
+                  <Car className="w-3 h-3 mr-1" />
+                  {vehicleCompat}
+                </Badge>
+              )}
             </div>
 
             <div className="flex flex-wrap items-center gap-4 text-sm">

@@ -41,6 +41,14 @@ export const inventoryItemSchema = z.object({
   locationBin: z.string().min(1, "Bin is required"),
   price: z.number().min(0, "Price must be 0 or greater").optional(),
   notes: z.string().optional(),
+  imageUrl: z.string().optional(),
+  vehicleMake: z.string().optional(),
+  vehicleModel: z.string().optional(),
+  vehicleYearStart: z.number().int().min(1900).max(2100).optional(),
+  vehicleYearEnd: z.number().int().min(1900).max(2100).optional(),
+  sold: z.boolean().optional().default(false),
+  soldPrice: z.number().min(0).optional(),
+  soldDate: z.string().optional(),
 });
 
 export const insertInventoryItemSchema = inventoryItemSchema.omit({ id: true });

@@ -63,6 +63,12 @@ export function ItemFormDialog({ open, onOpenChange, item }: ItemFormDialogProps
       locationBin: "",
       price: 0,
       notes: "",
+      imageUrl: "",
+      vehicleMake: "",
+      vehicleModel: "",
+      vehicleYearStart: undefined,
+      vehicleYearEnd: undefined,
+      sold: false,
     },
   });
 
@@ -81,6 +87,12 @@ export function ItemFormDialog({ open, onOpenChange, item }: ItemFormDialogProps
         locationBin: item.locationBin,
         price: item.price || 0,
         notes: item.notes || "",
+        imageUrl: item.imageUrl || "",
+        vehicleMake: item.vehicleMake || "",
+        vehicleModel: item.vehicleModel || "",
+        vehicleYearStart: item.vehicleYearStart,
+        vehicleYearEnd: item.vehicleYearEnd,
+        sold: item.sold || false,
       });
     } else {
       form.reset({
@@ -96,6 +108,12 @@ export function ItemFormDialog({ open, onOpenChange, item }: ItemFormDialogProps
         locationBin: "",
         price: 0,
         notes: "",
+        imageUrl: "",
+        vehicleMake: "",
+        vehicleModel: "",
+        vehicleYearStart: undefined,
+        vehicleYearEnd: undefined,
+        sold: false,
       });
     }
   }, [item, form]);
@@ -390,6 +408,111 @@ export function ItemFormDialog({ open, onOpenChange, item }: ItemFormDialogProps
                           placeholder="e.g. 12" 
                           {...field}
                           data-testid="input-item-bin"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            <FormField
+              control={form.control}
+              name="imageUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image URL</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="https://example.com/image.jpg"
+                      {...field}
+                      data-testid="input-item-image-url"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="space-y-3">
+              <FormLabel className="text-base font-semibold">Vehicle Compatibility</FormLabel>
+              <div className="grid gap-4 md:grid-cols-4">
+                <FormField
+                  control={form.control}
+                  name="vehicleMake"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Make</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g. Ford" 
+                          {...field}
+                          data-testid="input-item-vehicle-make"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="vehicleModel"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Model</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g. Mustang" 
+                          {...field}
+                          data-testid="input-item-vehicle-model"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="vehicleYearStart"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Year From</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          min={1900}
+                          max={2100}
+                          placeholder="e.g. 2015"
+                          {...field}
+                          value={field.value ?? ""}
+                          onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                          data-testid="input-item-year-start"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="vehicleYearEnd"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Year To</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          min={1900}
+                          max={2100}
+                          placeholder="e.g. 2020"
+                          {...field}
+                          value={field.value ?? ""}
+                          onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                          data-testid="input-item-year-end"
                         />
                       </FormControl>
                       <FormMessage />
