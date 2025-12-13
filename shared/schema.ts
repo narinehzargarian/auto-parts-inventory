@@ -46,15 +46,29 @@ export const inventoryItemSchema = z.object({
   vehicleModel: z.string().optional(),
   vehicleYearStart: z.number().int().min(1900).max(2100).optional(),
   vehicleYearEnd: z.number().int().min(1900).max(2100).optional(),
-  sold: z.boolean().optional().default(false),
-  soldPrice: z.number().min(0).optional(),
-  soldDate: z.string().optional(),
 });
 
 export const insertInventoryItemSchema = inventoryItemSchema.omit({ id: true });
 
 export type InventoryItem = z.infer<typeof inventoryItemSchema>;
 export type InsertInventoryItem = z.infer<typeof insertInventoryItemSchema>;
+
+export const saleRecordSchema = z.object({
+  id: z.string(),
+  itemId: z.string(),
+  itemName: z.string(),
+  itemSku: z.string(),
+  itemCategory: z.enum(CATEGORIES),
+  quantitySold: z.number().int().min(1),
+  unitPrice: z.number().min(0),
+  totalPrice: z.number().min(0),
+  saleDate: z.string(),
+});
+
+export const insertSaleRecordSchema = saleRecordSchema.omit({ id: true });
+
+export type SaleRecord = z.infer<typeof saleRecordSchema>;
+export type InsertSaleRecord = z.infer<typeof insertSaleRecordSchema>;
 
 export const users = {
   id: "",

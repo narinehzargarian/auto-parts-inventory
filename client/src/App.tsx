@@ -14,6 +14,7 @@ import {
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 import Inventory from "@/pages/inventory";
+import Sales from "@/pages/sales";
 import LowStock from "@/pages/low-stock";
 import Settings from "@/pages/settings";
 
@@ -22,6 +23,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/inventory" component={Inventory} />
+      <Route path="/sales" component={Sales} />
       <Route path="/low-stock" component={LowStock} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />

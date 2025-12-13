@@ -11,7 +11,8 @@ import {
   Package,
   X,
   Car,
-  Image as ImageIcon
+  Image as ImageIcon,
+  DollarSign,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { ItemFormDialog } from "@/components/item-form-dialog";
+import { MarkSoldDialog } from "@/components/mark-sold-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type InventoryItem, CATEGORIES, CONDITIONS } from "@shared/schema";
@@ -78,17 +80,20 @@ function getVehicleCompatibilityText(item: InventoryItem): string | null {
 function ItemCard({ 
   item, 
   onEdit, 
-  onDelete 
+  onDelete,
+  onMarkSold 
 }: { 
   item: InventoryItem; 
   onEdit: () => void;
   onDelete: () => void;
+  onMarkSold: () => void;
 }) {
   const isLowStock = item.quantity <= item.lowStockThreshold;
+  const isOutOfStock = item.quantity === 0;
   const vehicleCompat = getVehicleCompatibilityText(item);
   
   return (
-    <Card className="group relative">
+    <Card className={`group relative ${isOutOfStock ? 'opacity-60' : ''}`}>
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
           {item.imageUrl ? (
@@ -109,14 +114,36 @@ function ItemCard({
           <div className="flex-1 min-w-0 space-y-3">
             <div className="flex items-start justify-between gap-2">
               <div className="space-y-1">
-                <h3 className="font-semibold text-lg leading-tight truncate" data-testid={`text-item-name-${item.id}`}>
-                  {item.name}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-lg leading-tight truncate" data-testid={`text-item-name-${item.id}`}>
+                    {item.name}
+                  </h3>
+                  {isOutOfStock && (
+                    <Badge 
+                      variant="outline" 
+                      className="shrink-0 bg-gray-500/10 text-gray-700 dark:text-gray-400 border-gray-500/30"
+                      data-testid={`badge-out-of-stock-${item.id}`}
+                    >
+                      Out of Stock
+                    </Badge>
+                  )}
+                </div>
                 <p className="font-mono text-sm text-muted-foreground" data-testid={`text-item-sku-${item.id}`}>
                   {item.sku}
                 </p>
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                {item.quantity > 0 && (
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    onClick={onMarkSold}
+                    title="Record Sale"
+                    data-testid={`button-mark-sold-${item.id}`}
+                  >
+                    <DollarSign className="w-4 h-4 text-emerald-600" />
+                  </Button>
+                )}
                 <Button 
                   size="icon" 
                   variant="ghost" 
@@ -175,11 +202,11 @@ function ItemCard({
           </div>
 
           <div className="text-right shrink-0 space-y-1">
-            <div className={`text-2xl font-bold ${isLowStock ? 'text-amber-600 dark:text-amber-400' : ''}`} data-testid={`text-item-qty-${item.id}`}>
+            <div className={`text-2xl font-bold ${isLowStock && !isOutOfStock ? 'text-amber-600 dark:text-amber-400' : ''}`} data-testid={`text-item-qty-${item.id}`}>
               {item.quantity}
             </div>
             <div className="text-xs text-muted-foreground">in stock</div>
-            {isLowStock && (
+            {isLowStock && !isOutOfStock && (
               <Badge variant="destructive" className="mt-1">
                 Low Stock
               </Badge>
@@ -206,12 +233,15 @@ export default function Inventory() {
     searchParams.get("category") || "all"
   );
   const [conditionFilter, setConditionFilter] = useState<string>("all");
+  const [stockFilter, setStockFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("name");
 
   const [formOpen, setFormOpen] = useState(searchParams.get("add") === "true");
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deletingItem, setDeletingItem] = useState<InventoryItem | null>(null);
+  const [markSoldOpen, setMarkSoldOpen] = useState(false);
+  const [markingSoldItem, setMarkingSoldItem] = useState<InventoryItem | null>(null);
 
   useEffect(() => {
     if (searchParams.get("add") === "true") {
@@ -268,6 +298,14 @@ export default function Inventory() {
       result = result.filter((item) => item.condition === conditionFilter);
     }
 
+    if (stockFilter === "in-stock") {
+      result = result.filter((item) => item.quantity > 0);
+    } else if (stockFilter === "low-stock") {
+      result = result.filter((item) => item.quantity > 0 && item.quantity <= item.lowStockThreshold);
+    } else if (stockFilter === "out-of-stock") {
+      result = result.filter((item) => item.quantity === 0);
+    }
+
     result.sort((a, b) => {
       switch (sortBy) {
         case "name":
@@ -284,7 +322,7 @@ export default function Inventory() {
     });
 
     return result;
-  }, [items, searchQuery, categoryFilter, conditionFilter, sortBy]);
+  }, [items, searchQuery, categoryFilter, conditionFilter, stockFilter, sortBy]);
 
   const handleEdit = (item: InventoryItem) => {
     setEditingItem(item);
@@ -296,6 +334,11 @@ export default function Inventory() {
     setDeleteConfirmOpen(true);
   };
 
+  const handleMarkSold = (item: InventoryItem) => {
+    setMarkingSoldItem(item);
+    setMarkSoldOpen(true);
+  };
+
   const handleCloseForm = () => {
     setFormOpen(false);
     setEditingItem(null);
@@ -305,10 +348,11 @@ export default function Inventory() {
     setSearchQuery("");
     setCategoryFilter("all");
     setConditionFilter("all");
+    setStockFilter("all");
     setSortBy("name");
   };
 
-  const hasActiveFilters = searchQuery || categoryFilter !== "all" || conditionFilter !== "all";
+  const hasActiveFilters = searchQuery || categoryFilter !== "all" || conditionFilter !== "all" || stockFilter !== "all";
 
   return (
     <div className="p-6 space-y-6">
@@ -365,6 +409,18 @@ export default function Inventory() {
                 </SelectContent>
               </Select>
 
+              <Select value={stockFilter} onValueChange={setStockFilter}>
+                <SelectTrigger className="w-[130px]" data-testid="select-filter-stock">
+                  <SelectValue placeholder="Stock" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Stock</SelectItem>
+                  <SelectItem value="in-stock">In Stock</SelectItem>
+                  <SelectItem value="low-stock">Low Stock</SelectItem>
+                  <SelectItem value="out-of-stock">Out of Stock</SelectItem>
+                </SelectContent>
+              </Select>
+
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-[130px]" data-testid="select-sort">
                   <SelectValue placeholder="Sort by" />
@@ -399,6 +455,7 @@ export default function Inventory() {
               item={item}
               onEdit={() => handleEdit(item)}
               onDelete={() => handleDelete(item)}
+              onMarkSold={() => handleMarkSold(item)}
             />
           ))
         ) : (
@@ -455,6 +512,12 @@ export default function Inventory() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <MarkSoldDialog
+        open={markSoldOpen}
+        onOpenChange={setMarkSoldOpen}
+        item={markingSoldItem}
+      />
     </div>
   );
 }

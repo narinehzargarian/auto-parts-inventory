@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   Settings,
   Wrench,
+  DollarSign,
 } from "lucide-react";
 import {
   Sidebar,
@@ -29,6 +30,11 @@ const menuItems = [
     title: "Inventory",
     url: "/inventory",
     icon: Package,
+  },
+  {
+    title: "Sales",
+    url: "/sales",
+    icon: DollarSign,
   },
   {
     title: "Low Stock",

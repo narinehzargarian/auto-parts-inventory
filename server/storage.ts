@@ -1,4 +1,4 @@
-import { type InventoryItem, type InsertInventoryItem } from "@shared/schema";
+import { type InventoryItem, type InsertInventoryItem, type SaleRecord, type InsertSaleRecord } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -7,13 +7,17 @@ export interface IStorage {
   createItem(item: InsertInventoryItem): Promise<InventoryItem>;
   updateItem(id: string, item: Partial<InsertInventoryItem>): Promise<InventoryItem | undefined>;
   deleteItem(id: string): Promise<boolean>;
+  getAllSales(): Promise<SaleRecord[]>;
+  createSale(sale: InsertSaleRecord): Promise<SaleRecord>;
 }
 
 export class MemStorage implements IStorage {
   private items: Map<string, InventoryItem>;
+  private sales: Map<string, SaleRecord>;
 
   constructor() {
     this.items = new Map();
+    this.sales = new Map();
     this.seedData();
   }
 
@@ -36,7 +40,6 @@ export class MemStorage implements IStorage {
         vehicleModel: "Mustang GT",
         vehicleYearStart: 2015,
         vehicleYearEnd: 2020,
-        sold: false,
       },
       {
         name: "Honda Civic Transmission 5-Speed",
@@ -54,7 +57,6 @@ export class MemStorage implements IStorage {
         vehicleModel: "Civic",
         vehicleYearStart: 2012,
         vehicleYearEnd: 2015,
-        sold: false,
       },
       {
         name: "Toyota Camry Front Bumper",
@@ -72,7 +74,6 @@ export class MemStorage implements IStorage {
         vehicleModel: "Camry",
         vehicleYearStart: 2019,
         vehicleYearEnd: 2021,
-        sold: false,
       },
       {
         name: "Chevy Silverado Alternator",
@@ -90,7 +91,6 @@ export class MemStorage implements IStorage {
         vehicleModel: "Silverado 1500",
         vehicleYearStart: 2014,
         vehicleYearEnd: 2018,
-        sold: false,
       },
       {
         name: "Michelin All-Season Tire Set",
@@ -104,7 +104,6 @@ export class MemStorage implements IStorage {
         locationSection: "4",
         locationBin: "2",
         price: 200,
-        sold: false,
       },
       {
         name: "BMW 3-Series Windshield",
@@ -122,7 +121,6 @@ export class MemStorage implements IStorage {
         vehicleModel: "3-Series",
         vehicleYearStart: 2017,
         vehicleYearEnd: 2020,
-        sold: false,
       },
       {
         name: "Ford F-150 Leather Seat Set",
@@ -140,7 +138,6 @@ export class MemStorage implements IStorage {
         vehicleModel: "F-150 Lariat",
         vehicleYearStart: 2018,
         vehicleYearEnd: 2021,
-        sold: false,
       },
       {
         name: "Honda Accord Strut Assembly",
@@ -158,7 +155,6 @@ export class MemStorage implements IStorage {
         vehicleModel: "Accord",
         vehicleYearStart: 2016,
         vehicleYearEnd: 2020,
-        sold: false,
       },
       {
         name: "Brake Rotor Set - Universal",
@@ -172,7 +168,6 @@ export class MemStorage implements IStorage {
         locationSection: "3",
         locationBin: "1",
         price: 85,
-        sold: false,
       },
       {
         name: "Chevy Exhaust Manifold",
@@ -190,7 +185,6 @@ export class MemStorage implements IStorage {
         vehicleModel: "Camaro V6",
         vehicleYearStart: 2010,
         vehicleYearEnd: 2015,
-        sold: false,
       },
     ];
 
@@ -227,6 +221,17 @@ export class MemStorage implements IStorage {
 
   async deleteItem(id: string): Promise<boolean> {
     return this.items.delete(id);
+  }
+
+  async getAllSales(): Promise<SaleRecord[]> {
+    return Array.from(this.sales.values());
+  }
+
+  async createSale(insertSale: InsertSaleRecord): Promise<SaleRecord> {
+    const id = randomUUID();
+    const sale: SaleRecord = { ...insertSale, id };
+    this.sales.set(id, sale);
+    return sale;
   }
 }
 
