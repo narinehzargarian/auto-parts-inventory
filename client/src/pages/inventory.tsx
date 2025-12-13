@@ -13,6 +13,7 @@ import {
   Car,
   Image as ImageIcon,
   DollarSign,
+  QrCode,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ItemFormDialog } from "@/components/item-form-dialog";
 import { MarkSoldDialog } from "@/components/mark-sold-dialog";
+import { ItemQRCodeDialog } from "@/components/item-qr-code";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type InventoryItem, CATEGORIES, CONDITIONS } from "@shared/schema";
@@ -81,12 +83,14 @@ function ItemCard({
   item, 
   onEdit, 
   onDelete,
-  onMarkSold 
+  onMarkSold,
+  onShowQR,
 }: { 
   item: InventoryItem; 
   onEdit: () => void;
   onDelete: () => void;
   onMarkSold: () => void;
+  onShowQR: () => void;
 }) {
   const isLowStock = item.quantity <= item.lowStockThreshold;
   const isOutOfStock = item.quantity === 0;
@@ -133,6 +137,15 @@ function ItemCard({
                 </p>
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  onClick={onShowQR}
+                  title="Show QR Code"
+                  data-testid={`button-show-qr-${item.id}`}
+                >
+                  <QrCode className="w-4 h-4" />
+                </Button>
                 {item.quantity > 0 && (
                   <Button 
                     size="icon" 
@@ -242,6 +255,8 @@ export default function Inventory() {
   const [deletingItem, setDeletingItem] = useState<InventoryItem | null>(null);
   const [markSoldOpen, setMarkSoldOpen] = useState(false);
   const [markingSoldItem, setMarkingSoldItem] = useState<InventoryItem | null>(null);
+  const [qrCodeOpen, setQrCodeOpen] = useState(false);
+  const [qrCodeItem, setQrCodeItem] = useState<InventoryItem | null>(null);
 
   useEffect(() => {
     if (searchParams.get("add") === "true") {
@@ -337,6 +352,11 @@ export default function Inventory() {
   const handleMarkSold = (item: InventoryItem) => {
     setMarkingSoldItem(item);
     setMarkSoldOpen(true);
+  };
+
+  const handleShowQR = (item: InventoryItem) => {
+    setQrCodeItem(item);
+    setQrCodeOpen(true);
   };
 
   const handleCloseForm = () => {
@@ -456,6 +476,7 @@ export default function Inventory() {
               onEdit={() => handleEdit(item)}
               onDelete={() => handleDelete(item)}
               onMarkSold={() => handleMarkSold(item)}
+              onShowQR={() => handleShowQR(item)}
             />
           ))
         ) : (
@@ -517,6 +538,12 @@ export default function Inventory() {
         open={markSoldOpen}
         onOpenChange={setMarkSoldOpen}
         item={markingSoldItem}
+      />
+
+      <ItemQRCodeDialog
+        open={qrCodeOpen}
+        onOpenChange={setQrCodeOpen}
+        item={qrCodeItem}
       />
     </div>
   );
