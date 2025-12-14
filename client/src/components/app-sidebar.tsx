@@ -6,6 +6,7 @@ import {
   Settings,
   Wrench,
   DollarSign,
+  BarChart3,
 } from "lucide-react";
 import {
   Sidebar,
@@ -35,6 +36,11 @@ const menuItems = [
     title: "Sales",
     url: "/sales",
     icon: DollarSign,
+  },
+  {
+    title: "Reports",
+    url: "/reports",
+    icon: BarChart3,
   },
   {
     title: "Low Stock",

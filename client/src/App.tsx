@@ -15,6 +15,7 @@ import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 import Inventory from "@/pages/inventory";
 import Sales from "@/pages/sales";
+import Reports from "@/pages/reports";
 import LowStock from "@/pages/low-stock";
 import Settings from "@/pages/settings";
 
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/inventory" component={Inventory} />
       <Route path="/sales" component={Sales} />
+      <Route path="/reports" component={Reports} />
       <Route path="/low-stock" component={LowStock} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
