@@ -147,7 +147,7 @@ export default function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold" data-testid="text-page-title">Dashboard</h1>
-          <p className="text-muted-foreground">Overview of your junkyard inventory</p>
+          <p className="text-muted-foreground">Overview of your auto parts inventory</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <Button asChild variant="outline" data-testid="button-quick-search">

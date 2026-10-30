@@ -1,12 +1,8 @@
-# JunkYard Pro - Inventory Management System
+# Auto Parts Inventory
 
 ## Overview
 
-JunkYard Pro is a web-based inventory management system designed for junkyard operations. It enables tracking of salvaged auto parts and machines with features for categorization, location tracking, stock level monitoring, and condition assessment. The application follows a Material Design approach optimized for data-dense interfaces with high contrast for outdoor/workshop visibility.
-
-## User Preferences
-
-Preferred communication style: Simple, everyday language.
+Auto Parts Inventory is a web-based inventory management system for auto parts yards. It enables tracking of salvaged auto parts and machines with features for categorization, location tracking, stock level monitoring, and condition assessment. The application follows a Material Design approach optimized for data-dense interfaces with high contrast for outdoor/workshop visibility.
 
 ## System Architecture
 

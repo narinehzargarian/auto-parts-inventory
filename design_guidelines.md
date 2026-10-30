@@ -1,4 +1,4 @@
-# Design Guidelines: Junkyard Inventory Management System
+# Design Guidelines: Auto Parts Inventory
 
 ## Design Approach
 

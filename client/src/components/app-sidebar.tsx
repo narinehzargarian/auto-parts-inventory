@@ -66,7 +66,7 @@ export function AppSidebar() {
           </div>
           <div>
             <h1 className="text-lg font-bold tracking-tight text-sidebar-foreground" data-testid="text-app-title">
-              JunkYard Pro
+              Auto Parts Inventory
             </h1>
             <p className="text-xs text-muted-foreground">Inventory Manager</p>
           </div>

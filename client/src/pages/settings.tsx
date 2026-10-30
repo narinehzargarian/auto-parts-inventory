@@ -21,7 +21,7 @@ export default function Settings() {
           <CardHeader>
             <CardTitle>Appearance</CardTitle>
             <CardDescription>
-              Customize how JunkYard Pro looks on your device
+              Customize how Auto Parts Inventory looks on your device
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">

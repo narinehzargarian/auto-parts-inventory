@@ -40,7 +40,7 @@ function App() {
   };
 
   return (
-    <ThemeProvider defaultTheme="system" storageKey="junkyard-ui-theme">
+    <ThemeProvider defaultTheme="system" storageKey="auto-parts-ui-theme">
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <SidebarProvider style={style as React.CSSProperties}>
